@@ -1,0 +1,36 @@
+.container > div{
+  margin-bottom: 10px;
+}
+
+.container p{
+  margin-bottom: 4px;
+}
+
+.id_div{
+  display: flex;
+  gap: 10px;
+}
+
+.tel_div{
+  display: flex;
+  gap: 10px;
+}
+
+.email_div{
+  display: flex;
+  gap: 10px;
+}
+
+.addr_div{
+  display: flex;
+  gap:10px;
+  margin-bottom: 4px;
+}
+
+.error{
+  color: red;
+  font-size: 0.8rem;
+  margin-top: -2px;
+}
+
+

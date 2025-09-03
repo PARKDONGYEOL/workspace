@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
+<mapper namespace="com.green.backend_shop.book.mapper.BookMapper">
+    <resultMap id="book" type="com.green.backend_shop.book.dto.BookDTO">
+        <id     column="BOOK_NUM"   property="bookNum" />
+        <result column="TITLE"      property="title" />
+        <result column="PUBLISHER"  property="publisher" />
+        <result column="PRICE"      property="price" />
+        <result column="REG_DATE"   property="regDate" />
+        <result column="BOOK_INTRO" property="bookIntro" />
+        <result column="CATE_NUM"   property="cateNum" />
+        <association property="bookImgDTO" resultMap="bookImg" />
+    </resultMap>
+
+    <resultMap id="bookImg" type="com.green.backend_shop.book.dto.BookImgDTO">
+        <id    column="IMG_NUM" property="imNum" />
+        <result column="ORIGIN_IMG_NAME" property="originImgName"/>
+        <result column="ATTACHED_IMG_NAME" property="attachedImgName"/>
+        <result column="IS_MAIN" property="isMain"/>
+    </resultMap>
+
+    <!--  BOOK 테이블에 데이터 삽입 시 저장되는 BOOK_NUM을 조회 하는 쿼리  -->
+    <select id="getNextNum" resultType="int">
+        SELECT IFNULL(MAX(BOOK_NUM), 0) + 1 FROM book
+    </select>
+
+    <!--도서 등록-->
+    <insert id="insertBook">
+        INSERT INTO BOOK
+            ( BOOK_NUM
+            , TITLE
+            , PUBLISHER
+            , PRICE
+            , BOOK_INTRO
+            , CATE_NUM
+        ) VALUES (
+            #{bookNum}
+            , #{title}
+            , #{publisher}
+            , #{price}
+            , #{bookIntro}
+            , #{cateNum}
+        )
+    </insert>
+
+    <!--  도서이미지 등록 쿼리  -->
+    <insert id="insertImgs">
+        INSERT INTO BOOK_IMG
+        ( ORIGIN_IMG_NAME, ATTACHED_IMG_NAME, BOOK_NUM, IS_MAIN )
+        VALUES
+        <!--  첨부한 파일 수 만큼 반복  -->
+        <!--  separator 한번 반복될때마다 실행할 쿼리문 끝에 사용할 문자지정 마지막에는 지정되지 않음 -->
+        <!--  collection 전달 받은 배열 데이터명   -->
+        <!--  bookImg 배열에서 하나씩 뺀 데이터명 임의지정  -->
+        <foreach collection="bookImgList" item="bookImg" separator=",">
+            (#{bookImg.originImgName}, #{bookImg.attachedImgName}, #{bookImg.bookNum}, #{bookImg.isMain})
+        </foreach>
+    </insert>
+
+    <!--도서 목록 조회-->
+    <select id="getBookList" resultMap="book">
+        SELECT  book.BOOK_NUM AS BOOK_NUM
+            ,   TITLE
+            ,   PRICE
+            ,   ATTACHED_IMG_NAME
+        FROM book
+        INNER JOIN book_img
+        ON book.BOOK_NUM = book_img.BOOK_NUM
+        WHERE IS_MAIN = 'Y'
+        ORDER BY REG_DATE DESC;
+    </select>
+
+    <!--도서 상세 조회-->
+    <select id="getBookDetail" resultMap="book">
+        SELECT book.BOOK_NUM AS BOOK_NUM
+        , TITLE
+        , PUBLISHER
+        , PRICE
+        , BOOK_INTRO
+        , ATTACHED_IMG_NAME
+        , IS_MAIN
+        FROM BOOK
+        LEFT JOIN book_img
+        ON BOOK.BOOK_NUM = book_img.BOOK_NUM
+        WHERE book.BOOK_NUM = #{bookNum}
+    </select>
+
+
+</mapper>
+

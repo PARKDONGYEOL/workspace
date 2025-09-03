@@ -1,0 +1,24 @@
+.container{
+  width: 900px;
+  margin: 0 auto;
+}
+
+.header_div{
+  height: 10vh;
+  border: 1px solid red;
+}
+
+.main{
+  display: flex;
+  height: 90vh;
+}
+
+.side{
+  width: 20%;
+}
+
+.content{
+  width: 80%;
+  padding: 20px;
+  padding-bottom: 0px;
+}

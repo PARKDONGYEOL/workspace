@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
+<mapper namespace="com.green.backend_shop.member.mapper.MemberMapper">
+
+    <resultMap id="member" type="com.green.backend_shop.member.dto.MemberDTO">
+        <id     column="MEM_ID"         property="memId"/>
+        <result column="MEM_NAME"       property="memName"/>
+        <result column="MEM_TEL"        property="memTel"/>
+        <result column="MEM_ADDR"       property="memAddr"/>
+        <result column="ADDR_DETAIL"    property="addrDetail"/>
+        <result column="MEM_EMAIL"      property="memEmail"/>
+        <result column="MEM_PW"         property="memPw"/>
+        <result column="MEM_ROLE"       property="memRole"/>
+        <result column="JOIN_DATE"      property="joinDate"/>
+    </resultMap>
+
+    <!--회원가입-->
+    <insert id="join">
+        INSERT INTO SHOP_MEMBER (
+            MEM_ID
+            , MEM_NAME
+            , MEM_TEL
+            , MEM_ADDR
+            , ADDR_DETAIL
+            , MEM_EMAIL
+            , MEM_PW
+        ) VALUES (
+            #{memId}
+            , #{memName}
+            , CONCAT(#{memTelArr[0]}, '-', #{memTelArr[1]}, '-', #{memTelArr[2]})
+            , #{memAddr}
+            , #{addrDetail}
+            , #{memEmail}
+            , #{memPw}
+        )
+    </insert>
+
+    <!--아이디 중복 확인-->
+    <select id="checkMemId" resultType="String">
+        SELECT MEM_ID
+        FROM SHOP_MEMBER
+        WHERE MEM_ID = #{memId}
+    </select>
+
+    <select id="login" resultMap="member">
+        SELECT MEM_ID
+            , MEM_NAME
+            , MEM_ROLE
+        FROM shop_member
+        WHERE MEM_ID = #{memId}
+        AND MEM_PW = #{memPw}
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

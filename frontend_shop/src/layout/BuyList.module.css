@@ -1,0 +1,39 @@
+.buyList_div {
+  width: 100%;
+}
+
+.head_div {
+  display: flex;
+  background-color: #f3f3f3;
+  gap: 10px; 
+  margin-bottom: 10px;
+}
+
+.head_div > div {
+  color: darkslategrey;
+  
+}
+
+.head_div > div:nth-child(1) {
+  flex: 2; 
+}
+
+.head_div > div:nth-child(2) {
+  flex: 2.5; 
+}
+
+.head_div > div:nth-child(3) {
+  flex: 3.3; 
+}
+
+.head_div > div:nth-child(4) {
+  flex: 1.2; 
+}
+
+.head_div > div > span {
+  font-size: 0.8rem;
+}
+
+tr, td {
+  text-align: center;
+}

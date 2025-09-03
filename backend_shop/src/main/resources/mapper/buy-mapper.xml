@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
+<mapper namespace="com.green.backend_shop.buy.mapper.BuyMapper">
+    <resultMap id="buy" type="com.green.backend_shop.buy.dto.BuyDTO">
+        <id     column="BUY_NUM"        property="buyNum" />
+        <result column="BOOK_NUM"       property="bookNum" />
+        <result column="MEM_ID"         property="memId" />
+        <result column="BUY_DATE"       property="buyDate" />
+        <result column="BUY_CNT"        property="buyCnt" />
+        <result column="ORDER_NUM"      property="orderNum" />
+    </resultMap>
+
+    <resultMap id="buyDTOForAdmin" type="com.green.backend_shop.buy.dto.BuyDTOForAdmin">
+        <id     column="ORDER_NUM" property="orderNum"/>
+        <result column="MEM_ID"     property="memId" />
+        <result column="TITLE"      property="title" />
+        <result column="PRICE"      property="price" />
+        <result column="BUY_DATE"   property="buyDate" />
+    </resultMap>
+
+    <!-- 도서 상세 페이지  구매하기 -->
+    <insert id="buyAll">
+        INSERT INTO SHOP_BUY ( BOOK_NUM, MEM_ID,  BUY_CNT, ORDER_NUM)
+        VALUES
+        <foreach collection="cartNumList" item="cartNum" separator=",">
+            (   (SELECT BOOK_NUM FROM shop_cart WHERE CART_NUM = #{cartNum}),
+                #{memId},
+                (SELECT CART_CNT FROM shop_cart WHERE CART_NUM = #{cartNum}),
+                (SELECT IFNULL(MAX(ORDER_NUM),0) + 1 FROM SHOP_BUY)
+            )
+        </foreach>
+    </insert>
+
+    <insert id="buyAdd">
+        INSERT INTO SHOP_BUY ( BOOK_NUM, MEM_ID, BUY_CNT, ORDER_NUM  )
+        VALUES (#{bookNum}, #{memId}, #{buyCnt}, (SELECT IFNULL(MAX(ORDER_NUM),0) + 1 FROM SHOP_BUY))
+    </insert>
+
+    <!-- 관리자 페이지 구매 이력 조회 -->
+    <select id="getBuylistForAdmin" resultMap="buyDTOForAdmin">
+        SELECT
+            ORDER_NUM,
+            CASE
+            WHEN COUNT(ORDER_NUM) = 1 THEN
+                MAX((SELECT TITLE FROM BOOK WHERE BOOK.BOOK_NUM = SHOP_BUY.BOOK_NUM))
+            ELSE
+                CONCAT(
+                MAX((SELECT TITLE FROM BOOK WHERE BOOK.BOOK_NUM = SHOP_BUY.BOOK_NUM)),
+                ' 외 ',
+                COUNT(ORDER_NUM) - 1,
+                '건'
+                )
+            END AS TITLE,
+            MAX(MEM_ID) AS MEM_ID,
+            SUM((SELECT PRICE FROM BOOK WHERE BOOK.BOOK_NUM = SHOP_BUY.BOOK_NUM) * BUY_CNT) AS PRICE,
+            MAX(BUY_DATE) AS BUY_DATE
+        FROM SHOP_BUY
+        GROUP BY ORDER_NUM
+        ORDER BY BUY_DATE DESC;
+    </select>
+</mapper>
+

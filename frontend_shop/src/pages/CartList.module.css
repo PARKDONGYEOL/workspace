@@ -1,0 +1,29 @@
+.cart_list_table{
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.cart_list_table td{
+  padding: 6px;
+  vertical-align: middle;
+}
+
+.item_info{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+}
+
+.cnt_div{
+  display: flex;
+  gap: 8px;
+}
+
+.buy_div{
+  display: flex;
+  justify-content: end;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
